@@ -4,49 +4,80 @@
 <meta charset="UTF-8">
 <title>Mariage Johann & Nuria</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 
 <style>
 
 body{
-font-family:'Inter',sans-serif;
-background:#f7f7f7;
+margin:0;
+height:100vh;
 display:flex;
 align-items:center;
 justify-content:center;
-height:100vh;
-margin:0;
+background:linear-gradient(135deg,#ffffff,#f5f5f5);
+font-family:'Inter',sans-serif;
 }
 
 .container{
 background:white;
-padding:50px;
+padding:60px;
 border-radius:20px;
-box-shadow:0 10px 30px rgba(0,0,0,0.08);
+box-shadow:0 15px 50px rgba(0,0,0,0.08);
 text-align:center;
 width:420px;
+max-width:90%;
 }
 
 h1{
+font-family:'Playfair Display',serif;
+font-size:34px;
 margin-bottom:5px;
+color:#c6a86b;
 }
 
 .date{
-color:#888;
-margin-bottom:30px;
+color:#999;
+margin-bottom:35px;
 }
 
 input{
 width:85%;
-padding:14px;
-border-radius:10px;
+padding:15px;
+border-radius:12px;
 border:1px solid #ddd;
 font-size:16px;
+outline:none;
+transition:0.3s;
 }
 
-#result{
-margin-top:25px;
-font-size:20px;
+input:focus{
+border-color:#c6a86b;
+box-shadow:0 0 8px rgba(198,168,107,0.3);
+}
+
+.result{
+margin-top:30px;
+font-size:22px;
+opacity:0;
+transform:translateY(20px);
+transition:all 0.6s ease;
+}
+
+.result.show{
+opacity:1;
+transform:translateY(0);
+}
+
+.tablemates{
+margin-top:20px;
+color:#555;
+font-size:16px;
+line-height:1.7;
+}
+
+.gold{
+color:#c6a86b;
+font-weight:500;
 }
 
 </style>
@@ -59,120 +90,109 @@ font-size:20px;
 <h1>Johann & Nuria</h1>
 <div class="date">3 avril 2026</div>
 
-<input id="search" placeholder="Entrez votre prénom ou nom">
+<input id="search" placeholder="Entrez votre nom">
 
-<div id="result"></div>
+<div id="result" class="result"></div>
+<div id="mates" class="tablemates"></div>
 
 </div>
 
 <script>
 
-const guests = {
+const tables = {
 
-"william":"Table 19",
-"aaron":"Table 19",
-"wildan":"Table 19",
-"tiphanie":"Table 19",
-"sandra":"Table 19",
+"1":["Kaelan","Ahcene","Ana","Anildo","Isaac","Chloe","Tito","Maman Nuria","Ivy"],
 
-"christopher":"Table 12",
-"aya":"Table 12",
-"mohammed":"Table 12",
-"dj chris":"Table 12",
+"2":["Mama Filipa","Papa Nuria","Nidia","Lisandra","Thelma","Nicole","Thierry","Tia Susana","Felisberto"],
 
-"helea":"Table 21",
-"samantha":"Table 21",
-"kyslie":"Table 21",
-"maria k":"Table 21",
+"3":["Catia","Keano","Kayla","Nancy","Vania","Lea","Yara","Ricardo","Cintia","Cristina","Victoria"],
 
-"arnaud":"Table 16",
-"jack":"Table 16",
-"achoua":"Table 16",
+"4":["Lukas","Stefan","Davi","Enzo","Zoe","Zara"],
 
-"ines":"Table 23",
-"benoit":"Table 23",
-"fredo":"Table 23",
+"5":["Gabrielle","Noah","Maelys","Mounia","Naim","Eden","Severine","Momo"],
 
-"gaelle":"Table 7",
-"usher":"Table 7",
-"ashley":"Table 7",
+"6":["Tia Tania","Tia Julia","Tio Jota","Tonton Geraldo","Marie","Patrick","Tia Tanha","Tio Alex","Tia Carla","Tia Djena"],
 
-"lukas":"Table 4",
-"stefan":"Table 4",
-"davi":"Table 4",
+"7":["Gaelle","Usher","Ashley","Isaiah","Victoria","Alexis","Elijah"],
 
-"tia tania":"Table 6",
-"tia julia":"Table 6",
-"tio jota":"Table 6",
+"8":["Thaïs","Rayan","Anais","Lenira","Ivan","Marcio","Assia","Filipe","Adriano","Gerson"],
 
-"mama filipa":"Table 2",
-"papa nuria":"Table 2",
-"nidia":"Table 2",
+"9":["Emma","Victoire","Agnès","Oceane","Noah","Ana","Anthony","Ode","Maxence"],
 
-"kylian":"Table 13",
-"stephane":"Table 13",
+"10":["Evangeliste Gianny","Helena","Laura","Naomi","Noemi","Oceanne","Priscillia","Sheryne","Laeticia","Cynthia"],
 
-"tata julienne":"Table 15",
-"jean baptiste":"Table 15",
+"11":["Enzo","Isaac","Guillith","Jordan","Esther","Joelle","Asayah","Manassé","Jackson","Anicia"],
 
-"pierre":"Table 14",
-"axel":"Table 14",
+"12":["Christopher","Aya","Mohammed","Dj Chris","Deejay 13"],
 
-"david":"Table 22",
-"jayce":"Table 22",
+"13":["Tonton Alain","Tata Chantal","Marie Agathe","Marie Pascal","Kylian","Tonton Thierry","Tata Raissa","Everdy","Grace","Stephane"],
 
-"jonathan":"Table 18",
-"naomie":"Table 18",
+"14":["Maman Johann","Pierre","Stella","Peddy","Papa Johann","Axel","Ahcena","Lili","Massita","Charles"],
 
-"andrea":"Table 24",
-"dylan":"Table 24",
+"15":["Tata Julienne","Tata Florence","Krysdil","Krysen","Mamso","Tonton Alain","Jean-Baptiste","Kenny","Eni","Cassandra","Tonton Toussaint"],
 
-"deborah":"Table 17",
-"kevin":"Table 17",
+"16":["Arnaud","Jack","Achoua","Priya","Jules","Johan","Siva","Fatou"],
 
-"enzo":"Table 11",
-"isaac":"Table 11",
+"17":["Deborah","Christal","Kevin","Pasteur Jean Daniel","Servante Elise","Jugrace","Roberta","Servante Honorée","Edwyn","Odelie","Gaspard"],
 
-"helena":"Table 10",
-"laura":"Table 10",
+"18":["Jonathan","Naomie","Ronald","Silvio","Aby","Noemie Legendre","Tycia","Sarah Kibongui","Romuald","Anderson","Eldy"],
 
-"shanice":"Table 20",
+"19":["William","Aaron","Wildan","Tiphanie","Sandra","Nancy","Junior","Emeraude","Gerielle","Grace Julia","Yannis"],
 
-"emma":"Table 9",
-"victoire":"Table 9",
+"20":["Diaconesse Rosette","Diacre Larden","Shanice","Pasteur Deodat Babingui","Pasteure Lauriane Babingui","Pasteure Laure","Eline","Eliakim","Diacre Jacky","Diaconesse Mauly","Rose"],
 
-"kaelan":"Table 1",
-"ana":"Table 1",
+"21":["Helea","Samantha","Kyslie","Maria K","Sarah K","Marie","Nacera","Stacy","Sephora","Aurelie"],
 
-"thais":"Table 8",
-"rayan":"Table 8",
+"22":["David","Jayce","Tony","Keellion","Leonel","Curtis","Mohamed Aziz","Nico","Kendy","Daniel","Clément"],
 
-"catia":"Table 3",
-"keano":"Table 3",
+"23":["Ines","Benoit","Tom","Fredo","Chloe","Alicia","Renée","Manoella","Jeanette"],
 
-"gabrielle":"Table 5",
-"noah":"Table 5"
+"24":["Andrea","Dylan","Edison","Emmanuel","Florian","Jean Jerry","Jeff","Leny","Milhane","Yannis","Ulrich"]
 
 };
 
 const input = document.getElementById("search");
+const result = document.getElementById("result");
+const mates = document.getElementById("mates");
 
 input.addEventListener("input", function(){
 
 let value = input.value.toLowerCase().trim();
 
-let result = Object.keys(guests).find(name => name.includes(value));
+for (let table in tables){
 
-if(result){
+let found = tables[table].find(name =>
+name.toLowerCase().includes(value)
+);
 
-document.getElementById("result").innerHTML =
-"✨ Bienvenue <b>"+result+"</b><br>Votre table : <b>"+guests[result]+"</b>";
+if(found){
 
-}else{
+result.classList.remove("show");
 
-document.getElementById("result").innerHTML = "";
+setTimeout(()=>{
+
+result.innerHTML =
+"✨ Bienvenue <b>"+found+"</b><br>Votre table : <span class='gold'>"+table+"</span>";
+
+let others = tables[table].filter(n => n !== found);
+
+mates.innerHTML =
+"<br>À votre table il y a aussi :<br>• " +
+others.join("<br>• ");
+
+result.classList.add("show");
+
+},100);
+
+return;
 
 }
+
+}
+
+result.innerHTML="";
+mates.innerHTML="";
+result.classList.remove("show");
 
 });
 
