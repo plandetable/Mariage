@@ -17,8 +17,10 @@ font-family:'Inter',sans-serif;
 
 display:flex;
 justify-content:center;
-align-items:center;   /* 👈 centre verticalement */
-min-height:100vh;     /* 👈 prend toute la hauteur */
+align-items:center;
+
+min-height:100vh;   /* 👈 fallback pour tous */
+min-height:100svh;  /* 👈 meilleur pour iPhone */
 
 padding:20px;
 
