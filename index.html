@@ -14,15 +14,17 @@ height:100vh;
 display:flex;
 align-items:center;
 justify-content:center;
-background:#f8f8f8;
 font-family:'Inter',sans-serif;
+background:
+linear-gradient(rgba(255,255,255,0.92), rgba(255,255,255,0.92)),
+url("https://www.transparenttextures.com/patterns/paper-fibers.png");
 }
 
 .container{
 background:white;
 padding:50px;
 border-radius:18px;
-box-shadow:0 20px 60px rgba(0,0,0,0.08);
+box-shadow:0 25px 70px rgba(0,0,0,0.08);
 width:420px;
 max-width:90%;
 text-align:center;
@@ -37,7 +39,7 @@ margin-bottom:5px;
 
 .date{
 color:#999;
-margin-bottom:30px;
+margin-bottom:25px;
 }
 
 input{
@@ -77,14 +79,17 @@ padding:25px;
 border-radius:15px;
 background:#ffffff;
 box-shadow:0 10px 30px rgba(0,0,0,0.05);
+
 opacity:0;
-transform:translateY(20px);
-transition:all 0.6s ease;
+transform:scale(0.95) translateY(10px);
+filter:blur(6px);
+transition:all 0.5s ease;
 }
 
 .card.show{
 opacity:1;
-transform:translateY(0);
+transform:scale(1) translateY(0);
+filter:blur(0);
 }
 
 .gold{
@@ -94,7 +99,7 @@ color:#c6a86b;
 .grid{
 display:grid;
 grid-template-columns:1fr 1fr;
-gap:8px;
+gap:10px;
 margin-top:15px;
 text-align:left;
 }
@@ -102,6 +107,27 @@ text-align:left;
 .name{
 padding:6px 0;
 border-bottom:1px solid #eee;
+}
+
+.reset{
+margin-top:20px;
+padding:10px 18px;
+border:none;
+background:#c6a86b;
+color:white;
+border-radius:10px;
+cursor:pointer;
+display:none;
+}
+
+.reset:hover{
+background:#b99750;
+}
+
+.message{
+margin-top:20px;
+color:#888;
+font-size:14px;
 }
 
 </style>
@@ -118,7 +144,11 @@ border-bottom:1px solid #eee;
 
 <div id="suggestions" class="suggestions"></div>
 
+<div class="message">Nous sommes ravis de vous accueillir</div>
+
 <div id="card" class="card"></div>
+
+<button id="reset" class="reset">Nouvelle recherche</button>
 
 </div>
 
@@ -127,51 +157,28 @@ border-bottom:1px solid #eee;
 const tables = {
 
 "1":["Kaelan","Ahcene","Ana","Anildo","Isaac","Chloe","Tito","Maman Nuria","Ivy"],
-
 "2":["Mama Filipa","Papa Nuria","Nidia","Lisandra","Thelma","Nicole","Thierry","Tia Susana","Felisberto"],
-
 "3":["Catia","Keano","Kayla","Nancy","Vania","Lea","Yara","Ricardo","Cintia","Cristina","Victoria"],
-
 "4":["Lukas","Stefan","Davi","Enzo","Zoe","Zara"],
-
 "5":["Gabrielle","Noah","Maelys","Mounia","Naim","Eden","Severine","Momo"],
-
 "6":["Tia Tania","Tia Julia","Tio Jota","Tonton Geraldo","Marie","Patrick","Tia Tanha","Tio Alex","Tia Carla","Tia Djena"],
-
 "7":["Gaelle","Usher","Ashley","Isaiah","Victoria","Alexis","Elijah"],
-
 "8":["Thaïs","Rayan","Anais","Lenira","Ivan","Marcio","Assia","Filipe","Adriano","Gerson"],
-
 "9":["Emma","Victoire","Agnès","Oceane","Noah","Ana","Anthony","Ode","Maxence"],
-
 "10":["Evangeliste Gianny","Helena","Laura","Naomi","Noemi","Oceanne","Priscillia","Sheryne","Laeticia","Cynthia"],
-
 "11":["Enzo","Isaac","Guillith","Jordan","Esther","Joelle","Asayah","Manassé","Jackson","Anicia"],
-
 "12":["Christopher","Aya","Mohammed","Dj Chris","Deejay 13"],
-
 "13":["Tonton Alain","Tata Chantal","Marie Agathe","Marie Pascal","Kylian","Tonton Thierry","Tata Raissa","Everdy","Grace","Stephane"],
-
 "14":["Maman Johann","Pierre","Stella","Peddy","Papa Johann","Axel","Ahcena","Lili","Massita","Charles"],
-
 "15":["Tata Julienne","Tata Florence","Krysdil","Krysen","Mamso","Tonton Alain","Jean-Baptiste","Kenny","Eni","Cassandra","Tonton Toussaint"],
-
 "16":["Arnaud","Jack","Achoua","Priya","Jules","Johan","Siva","Fatou"],
-
 "17":["Deborah","Christal","Kevin","Pasteur Jean Daniel","Servante Elise","Jugrace","Roberta","Servante Honorée","Edwyn","Odelie","Gaspard"],
-
 "18":["Jonathan","Naomie","Ronald","Silvio","Aby","Noemie Legendre","Tycia","Sarah Kibongui","Romuald","Anderson","Eldy"],
-
 "19":["William","Aaron","Wildan","Tiphanie","Sandra","Nancy","Junior","Emeraude","Gerielle","Grace Julia","Yannis"],
-
 "20":["Diaconesse Rosette","Diacre Larden","Shanice","Pasteur Deodat Babingui","Pasteure Lauriane Babingui","Pasteure Laure","Eline","Eliakim","Diacre Jacky","Diaconesse Mauly","Rose"],
-
 "21":["Helea","Samantha","Kyslie","Maria K","Sarah K","Marie","Nacera","Stacy","Sephora","Aurelie"],
-
 "22":["David","Jayce","Tony","Keellion","Leonel","Curtis","Mohamed Aziz","Nico","Kendy","Daniel","Clément"],
-
 "23":["Ines","Benoit","Tom","Fredo","Chloe","Alicia","Renée","Manoella","Jeanette"],
-
 "24":["Andrea","Dylan","Edison","Emmanuel","Florian","Jean Jerry","Jeff","Leny","Milhane","Yannis","Ulrich"]
 
 };
@@ -179,48 +186,59 @@ const tables = {
 const input = document.getElementById("search");
 const suggestions = document.getElementById("suggestions");
 const card = document.getElementById("card");
+const reset = document.getElementById("reset");
 
 let allGuests = Object.values(tables).flat();
+
+function similarity(a,b){
+a=a.toLowerCase();
+b=b.toLowerCase();
+return a.split("").filter(c=>b.includes(c)).length;
+}
 
 input.addEventListener("input", () => {
 
 let value = input.value.toLowerCase();
 
-suggestions.innerHTML = "";
+suggestions.innerHTML="";
+card.classList.remove("show");
+card.innerHTML="";
+reset.style.display="none";
 
 if(!value) return;
 
-let matches = allGuests.filter(n => n.toLowerCase().includes(value)).slice(0,5);
+let matches = allGuests
+.map(name => ({name, score: similarity(value,name)}))
+.sort((a,b)=>b.score-a.score)
+.slice(0,5);
 
-matches.forEach(name => {
-
-let div = document.createElement("div");
-div.textContent = name;
-
-div.onclick = () => showResult(name);
-
+matches.forEach(obj=>{
+let div=document.createElement("div");
+div.textContent=obj.name;
+div.onclick=()=>showResult(obj.name);
 suggestions.appendChild(div);
-
 });
+
+if(matches.length){
+showResult(matches[0].name);
+}
 
 });
 
 function showResult(name){
 
-input.value = name;
-suggestions.innerHTML = "";
+input.value=name;
+suggestions.innerHTML="";
 
-for (let table in tables){
+for(let table in tables){
 
 if(tables[table].includes(name)){
 
-let others = tables[table].filter(n => n !== name);
-
-card.classList.remove("show");
+let others=tables[table].filter(n=>n!==name);
 
 setTimeout(()=>{
 
-card.innerHTML = `
+card.innerHTML=`
 ✨ Bienvenue <b>${name}</b><br><br>
 🍽️ Table <span class="gold">${table}</span>
 
@@ -230,6 +248,7 @@ ${others.map(n=>`<div class="name">${n}</div>`).join("")}
 `;
 
 card.classList.add("show");
+reset.style.display="inline-block";
 
 },100);
 
@@ -238,6 +257,14 @@ card.classList.add("show");
 }
 
 }
+
+reset.onclick=()=>{
+input.value="";
+card.innerHTML="";
+card.classList.remove("show");
+suggestions.innerHTML="";
+reset.style.display="none";
+};
 
 </script>
 
