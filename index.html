@@ -9,6 +9,8 @@
 
 <style>
 
+/* 🌿 BACKGROUND */
+
 body{
 margin:0;
 font-family:'Manrope', sans-serif;
@@ -16,10 +18,16 @@ display:flex;
 justify-content:center;
 align-items:center;
 min-height:100vh;
+min-height:100svh;
 padding:20px;
+
 color:#3A3A3A;
-background:linear-gradient(135deg, #f8f3ec 0%, #efe6d8 50%, #e8dccb 100%);
+
+background:
+linear-gradient(135deg, #f8f3ec 0%, #efe6d8 50%, #e8dccb 100%);
 }
+
+/* 🎬 INTRO */
 
 #intro{
 position:fixed;
@@ -49,6 +57,11 @@ font-size:38px;
 margin-bottom:10px;
 }
 
+.intro-content p{
+color:#7a7a7a;
+margin-bottom:35px;
+}
+
 .enter-btn{
 padding:14px 28px;
 border-radius:50px;
@@ -56,6 +69,11 @@ border:1px solid #C8A96A;
 background:transparent;
 color:#C8A96A;
 cursor:pointer;
+}
+
+.enter-btn:hover{
+background:#C8A96A;
+color:white;
 }
 
 @keyframes introFade{
@@ -67,16 +85,22 @@ opacity:0;
 pointer-events:none;
 }
 
+/* 💎 CONTAINER */
+
 .container{
 width:100%;
 max-width:420px;
 background:rgba(255,255,255,0.85);
+backdrop-filter:blur(10px);
 border-radius:24px;
 box-shadow:0 20px 50px rgba(0,0,0,0.08);
 padding:24px;
 }
 
+/* 📸 PHOTO */
+
 .photo-container{
+position:relative;
 height:230px;
 border-radius:18px;
 overflow:hidden;
@@ -87,18 +111,34 @@ margin-bottom:20px;
 width:100%;
 height:100%;
 object-fit:cover;
+object-position:65% 30%;
+filter:brightness(1.05);
 }
+
+.overlay{
+position:absolute;
+width:100%;
+height:100%;
+background:linear-gradient(to bottom, rgba(0,0,0,0.05), rgba(0,0,0,0.2));
+}
+
+/* ✨ TITRE */
 
 h1{
 font-family:'Playfair Display',serif;
 color:#C8A96A;
 text-align:center;
+margin:10px 0;
+font-size:30px;
 }
 
 .date,.message{
 text-align:center;
 color:#6e6e6e;
+margin-bottom:15px;
 }
+
+/* 🔎 INPUT */
 
 input{
 width:85%;
@@ -108,7 +148,15 @@ padding:14px;
 border-radius:14px;
 border:1px solid #e0d6c8;
 background:#f7f3ed;
+color:#3A3A3A;
+font-size:16px;
 }
+
+input::placeholder{
+color:#999;
+}
+
+/* 💡 SUGGESTIONS */
 
 .suggestions{
 margin-top:12px;
@@ -129,9 +177,15 @@ padding:14px;
 cursor:pointer;
 }
 
+.suggestions div:hover{
+background:#f5efe6;
+}
+
+/* 💎 CARD */
+
 .card{
-margin-top:20px;
-padding:20px;
+margin-top:25px;
+padding:22px;
 border-radius:18px;
 background:#fffdf9;
 box-shadow:0 10px 30px rgba(0,0,0,0.05);
@@ -160,11 +214,7 @@ margin-top:15px;
 border-bottom:1px solid #eee;
 }
 
-#planContainer{
-display:none;
-margin-top:20px;
-text-align:center;
-}
+/* 🔘 BOUTON */
 
 .reset{
 margin-top:20px;
@@ -175,6 +225,21 @@ border-radius:14px;
 background:#C8A96A;
 color:white;
 display:none;
+}
+
+/* 📍 PLAN */
+
+#planContainer{
+display:none;
+margin-top:20px;
+text-align:center;
+position:relative;
+animation:fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn{
+from{opacity:0; transform:translateY(10px);}
+to{opacity:1; transform:translateY(0);}
 }
 
 </style>
@@ -194,6 +259,7 @@ display:none;
 
 <div class="photo-container">
 <img src="photo.jpg" class="photo">
+<div class="overlay"></div>
 </div>
 
 <h1>Johann & Nuria</h1>
@@ -203,15 +269,17 @@ display:none;
 
 <div id="suggestions" class="suggestions"></div>
 
-<div id="welcomeMessage" class="message">
-Nous sommes ravis de vous accueillir
-</div>
+<div id="welcomeMessage" class="message">Nous sommes ravis de vous accueillir</div>
 
 <div id="card" class="card"></div>
 
 <div id="planContainer">
 <p style="color:#C8A96A;">📍 Trouvez votre table</p>
+
+<div id="planWrapper" style="position:relative;">
 <img src="plan.png" style="width:100%; border-radius:12px;">
+</div>
+
 </div>
 
 <button id="reset" class="reset">Nouvelle recherche</button>
@@ -263,14 +331,16 @@ input.addEventListener("input", () => {
 let value = input.value.toLowerCase();
 
 suggestions.innerHTML="";
-card.innerHTML="";
+suggestions.classList.remove("show");
 card.classList.remove("show");
+card.innerHTML="";
+reset.style.display="none";
 
 if(!value) return;
 
-let matches = allGuests.filter(name =>
-name.toLowerCase().includes(value)
-).slice(0,5);
+let matches = allGuests
+.filter(name => name.toLowerCase().includes(value))
+.slice(0,5);
 
 matches.forEach(name=>{
 let div=document.createElement("div");
@@ -279,13 +349,19 @@ div.onclick=()=>showResult(name);
 suggestions.appendChild(div);
 });
 
+if(matches.length){
 suggestions.classList.add("show");
+}
 
 });
 
 function showResult(name){
 
 input.value=name;
+
+document.getElementById("search").style.display = "none";
+document.getElementById("welcomeMessage").style.display = "none";
+
 suggestions.innerHTML="";
 suggestions.classList.remove("show");
 
@@ -306,6 +382,7 @@ ${others.map(n=>`<div class="name">${n}</div>`).join("")}
 
 card.classList.add("show");
 reset.style.display="block";
+
 document.getElementById("planContainer").style.display="block";
 
 }
@@ -321,7 +398,11 @@ card.classList.remove("show");
 suggestions.innerHTML="";
 suggestions.classList.remove("show");
 reset.style.display="none";
+
 document.getElementById("planContainer").style.display="none";
+
+document.getElementById("search").style.display = "block";
+document.getElementById("welcomeMessage").style.display = "block";
 };
 
 </script>
